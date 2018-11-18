@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="55087c53-94be-461e-b7f9-8c348e7c3031" name="Default" comment="" />
+    <ignored path="$PROJECT_DIR$/flink-fs-tests/target/" />
+    <ignored path="$PROJECT_DIR$/flink-connectors/flink-connector-elasticsearch-base/target/" />
+    <ignored path="$PROJECT_DIR$/flink-libraries/flink-python/target/" />
+    <ignored path="$PROJECT_DIR$/flink-shaded-hadoop/flink-shaded-hadoop2-uber/target/" />
+    <ignored path="$PROJECT_DIR$/flink-queryable-state/flink-queryable-state-client-java/target/" />
+    <ignored path="$PROJECT_DIR$/flink-connectors/flink-connector-kafka-0.8/target/" />
+    <ignored path="$PROJECT_DIR$/flink-filesystems/flink-mapr-fs/target/" />
+    <ignored path="$PROJECT_DIR$/flink-streaming-java/target/" />
+    <ignored path="$PROJECT_DIR$/flink-libraries/flink-sql-client/target/" />
+    <ignored path="$PROJECT_DIR$/flink-libraries/flink-gelly/target/" />
+    <ignored path="$PROJECT_DIR$/flink-libraries/target/" />
+    <ignored path="$PROJECT_DIR$/flink-runtime-web/target/" />
+    <ignored path="$PROJECT_DIR$/flink-clients/target/" />
+    <ignored path="$PROJECT_DIR$/flink-metrics/flink-metrics-graphite/target/" />
+    <ignored path="$PROJECT_DIR$/flink-end-to-end-tests/flink-high-parallelism-iterations-test/target/" />
+    <ignored path="$PROJECT_DIR$/flink-end-to-end-tests/flink-stream-stateful-job-upgrade-test/target/" />
+    <ignored path="$PROJECT_DIR$/flink-shaded-hadoop/flink-shaded-hadoop2/target/" />
+    <ignored path="$PROJECT_DIR$/flink-shaded-hadoop/target/" />
+    <ignored path="$PROJECT_DIR$/flink-formats/flink-avro-confluent-registry/target/" />
+    <ignored path="$PROJECT_DIR$/flink-end-to-end-tests/flink-local-recovery-and-allocation-test/target/" />
+    <ignored path="$PROJECT_DIR$/flink-filesystems/flink-s3-fs-presto/target/" />
+    <ignored path="$PROJECT_DIR$/flink-metrics/flink-metrics-ganglia/target/" />
+    <ignored path="$PROJECT_DIR$/flink-filesystems/flink-swift-fs-hadoop/target/" />
+    <ignored path="$PROJECT_DIR$/flink-formats/target/" />
+    <ignored path="$PROJECT_DIR$/flink-connectors/flink-connector-nifi/target/" />
+    <ignored path="$PROJECT_DIR$/flink-dist/target/" />
+    <ignored path="$PROJECT_DIR$/flink-optimizer/target/" />
+    <ignored path="$PROJECT_DIR$/flink-connectors/flink-connector-cassandra/target/" />
+    <ignored path="$PROJECT_DIR$/flink-test-utils-parent/flink-test-utils-junit/target/" />
+    <ignored path="$PROJECT_DIR$/flink-end-to-end-tests/flink-elasticsearch1-test/target/" />
+    <ignored path="$PROJECT_DIR$/flink-metrics/flink-metrics-dropwizard/target/" />
+    <ignored path="$PROJECT_DIR$/flink-connectors/flink-connector-rabbitmq/target/" />
+    <ignored path="$PROJECT_DIR$/flink-metrics/target/" />
+    <ignored path="$PROJECT_DIR$/flink-end-to-end-tests/flink-elasticsearch5-test/target/" />
+    <ignored path="$PROJECT_DIR$/flink-metrics/flink-metrics-jmx/target/" />
+    <ignored path="$PROJECT_DIR$/flink-filesystems/target/" />
+    <ignored path="$PROJECT_DIR$/flink-end-to-end-tests/flink-queryable-state-test/target/" />
+    <ignored path="$PROJECT_DIR$/flink-connectors/flink-hcatalog/target/" />
+    <ignored path="$PROJECT_DIR$/flink-streaming-scala/target/" />
+    <ignored path="$PROJECT_DIR$/flink-connectors/flink-connector-elasticsearch2/target/" />
+    <ignored path="$PROJECT_DIR$/flink-connectors/flink-orc/target/" />
+    <ignored path="$PROJECT_DIR$/flink-scala/target/" />
+    <ignored path="$PROJECT_DIR$/flink-end-to-end-tests/flink-quickstart-test/target/" />
+    <ignored path="$PROJECT_DIR$/flink-end-to-end-tests/flink-sql-client-test/target/" />
+    <ignored path="$PROJECT_DIR$/flink-connectors/flink-connector-elasticsearch5/target/" />
+    <ignored path="$PROJECT_DIR$/flink-libraries/flink-cep/target/" />
+    <ignored path="$PROJECT_DIR$/flink-docs/target/" />
+    <ignored path="$PROJECT_DIR$/flink-contrib/flink-storm-examples/target/" />
+    <ignored path="$PROJECT_DIR$/flink-filesystems/flink-s3-fs-hadoop/target/" />
+    <ignored path="$PROJECT_DIR$/flink-test-utils-parent/target/" />
+    <ignored path="$PROJECT_DIR$/flink-end-to-end-tests/flink-elasticsearch6-test/target/" />
+    <ignored path="$PROJECT_DIR$/flink-libraries/flink-ml/target/" />
+    <ignored path="$PROJECT_DIR$/flink-contrib/flink-storm/target/" />
+    <ignored path="$PROJECT_DIR$/flink-connectors/flink-jdbc/target/" />
+    <ignored path="$PROJECT_DIR$/flink-connectors/flink-connector-kafka-base/target/" />
+    <ignored path="$PROJECT_DIR$/flink-end-to-end-tests/flink-stream-state-ttl-test/target/" />
+    <ignored path="$PROJECT_DIR$/flink-queryable-state/target/" />
+    <ignored path="$PROJECT_DIR$/flink-java/target/" />
+    <ignored path="$PROJECT_DIR$/flink-end-to-end-tests/flink-confluent-schema-registry/target/" />
+    <ignored path="$PROJECT_DIR$/flink-metrics/flink-metrics-prometheus/target/" />
+    <ignored path="$PROJECT_DIR$/flink-libraries/flink-table/target/" />
+    <ignored path="$PROJECT_DIR$/flink-metrics/flink-metrics-datadog/target/" />
+    <ignored path="$PROJECT_DIR$/flink-examples/flink-examples-batch/target/" />
+    <ignored path="$PROJECT_DIR$/flink-quickstart/target/" />
+    <ignored path="$PROJECT_DIR$/flink-test-utils-parent/flink-test-utils/target/" />
+    <ignored path="$PROJECT_DIR$/flink-contrib/flink-connector-wikiedits/target/" />
+    <ignored path="$PROJECT_DIR$/flink-state-backends/target/" />
+    <ignored path="$PROJECT_DIR$/flink-core/target/" />
+    <ignored path="$PROJECT_DIR$/flink-mesos/target/" />
+    <ignored path="$PROJECT_DIR$/flink-connectors/flink-connector-twitter/target/" />
+    <ignored path="$PROJECT_DIR$/flink-end-to-end-tests/flink-parent-child-classloading-test/target/" />
+    <ignored path="$PROJECT_DIR$/flink-tests/target/" />
+    <ignored path="$PROJECT_DIR$/flink-libraries/flink-gelly-examples/target/" />
+    <ignored path="$PROJECT_DIR$/flink-connectors/flink-hadoop-compatibility/target/" />
+    <ignored path="$PROJECT_DIR$/flink-shaded-curator/target/" />
+    <ignored path="$PROJECT_DIR$/flink-examples/flink-examples-streaming/target/" />
+    <ignored path="$PROJECT_DIR$/flink-libraries/flink-cep-scala/target/" />
+    <ignored path="$PROJECT_DIR$/flink-state-backends/flink-statebackend-rocksdb/target/" />
+    <ignored path="$PROJECT_DIR$/flink-connectors/target/" />
+    <ignored path="$PROJECT_DIR$/flink-end-to-end-tests/flink-distributed-cache-via-blob-test/target/" />
+    <ignored path="$PROJECT_DIR$/target/" />
+    <ignored path="$PROJECT_DIR$/flink-connectors/flink-connector-elasticsearch6/target/" />
+    <ignored path="$PROJECT_DIR$/flink-quickstart/flink-quickstart-scala/target/" />
+    <ignored path="$PROJECT_DIR$/flink-formats/flink-avro/target/" />
+    <ignored path="$PROJECT_DIR$/flink-runtime/target/" />
+    <ignored path="$PROJECT_DIR$/flink-yarn-tests/target/" />
+    <ignored path="$PROJECT_DIR$/flink-connectors/flink-hbase/target/" />
+    <ignored path="$PROJECT_DIR$/flink-contrib/target/" />
+    <ignored path="$PROJECT_DIR$/flink-examples/flink-examples-table/target/" />
+    <ignored path="$PROJECT_DIR$/flink-formats/flink-parquet/target/" />
+    <ignored path="$PROJECT_DIR$/flink-libraries/flink-streaming-python/target/" />
+    <ignored path="$PROJECT_DIR$/flink-end-to-end-tests/flink-elasticsearch2-test/target/" />
+    <ignored path="$PROJECT_DIR$/flink-connectors/flink-connector-kafka-0.10/target/" />
+    <ignored path="$PROJECT_DIR$/flink-metrics/flink-metrics-slf4j/target/" />
+    <ignored path="$PROJECT_DIR$/flink-end-to-end-tests/flink-streaming-file-sink-test/target/" />
+    <ignored path="$PROJECT_DIR$/flink-end-to-end-tests/target/" />
+    <ignored path="$PROJECT_DIR$/flink-yarn/target/" />
+    <ignored path="$PROJECT_DIR$/flink-metrics/flink-metrics-core/target/" />
+    <ignored path="$PROJECT_DIR$/flink-container/target/" />
+    <ignored path="$PROJECT_DIR$/tools/force-shading/target/" />
+    <ignored path="$PROJECT_DIR$/flink-queryable-state/flink-queryable-state-runtime/target/" />
+    <ignored path="$PROJECT_DIR$/flink-connectors/flink-connector-elasticsearch/target/" />
+    <ignored path="$PROJECT_DIR$/flink-shaded-hadoop/flink-shaded-yarn-tests/target/" />
+    <ignored path="$PROJECT_DIR$/flink-end-to-end-tests/flink-bucketing-sink-test/target/" />
+    <ignored path="$PROJECT_DIR$/flink-formats/flink-json/target/" />
+    <ignored path="$PROJECT_DIR$/flink-end-to-end-tests/flink-dataset-allround-test/target/" />
+    <ignored path="$PROJECT_DIR$/flink-connectors/flink-connector-kafka-0.11/target/" />
+    <ignored path="$PROJECT_DIR$/flink-quickstart/flink-quickstart-java/target/" />
+    <ignored path="$PROJECT_DIR$/flink-examples/target/" />
+    <ignored path="$PROJECT_DIR$/flink-scala-shell/target/" />
+    <ignored path="$PROJECT_DIR$/flink-connectors/flink-connector-kafka-0.9/target/" />
+    <ignored path="$PROJECT_DIR$/flink-end-to-end-tests/flink-stream-sql-test/target/" />
+    <ignored path="$PROJECT_DIR$/flink-annotations/target/" />
+    <ignored path="$PROJECT_DIR$/flink-libraries/flink-gelly-scala/target/" />
+    <ignored path="$PROJECT_DIR$/flink-metrics/flink-metrics-statsd/target/" />
+    <ignored path="$PROJECT_DIR$/flink-filesystems/flink-hadoop-fs/target/" />
+    <ignored path="$PROJECT_DIR$/flink-connectors/flink-connector-filesystem/target/" />
+    <ignored path="$PROJECT_DIR$/flink-end-to-end-tests/flink-datastream-allround-test/target/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CheckStyle-IDEA-workspace">
+    <option name="configuration">
+      <map>
+        <entry key="last-active-plugin-version" value="5.23.0" />
+      </map>
+    </option>
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file leaf-file-name="JobMaster.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/flink-runtime/src/main/java/org/apache/flink/runtime/jobmaster/JobMaster.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1370">
+              <caret line="1149" column="150" selection-start-line="1149" selection-start-column="150" selection-end-line="1149" selection-end-column="150" />
+              <folding>
+                <element signature="e#0#62472#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>createEx</find>
+    </findStrings>
+  </component>
+  <component name="GradleLocalSettings">
+    <option name="modificationStamps">
+      <map>
+        <entry key="$USER_HOME$/learn/spring-data-keyvalue-examples/retwisj" value="1444363513679" />
+        <entry key="$USER_HOME$/test/gs-messaging-redis/complete" value="1444463464550" />
+      </map>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="importAutomatically" value="true" />
+      </MavenImportingSettings>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="17" />
+    <option name="y" value="23" />
+    <option name="width" value="1637" />
+    <option name="height" value="961" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+          <State>
+            <id>Abstraction issuesJava</id>
+          </State>
+          <State>
+            <id>Android Lint</id>
+          </State>
+          <State>
+            <id>Code style issuesJava</id>
+          </State>
+          <State>
+            <id>Groovy</id>
+          </State>
+          <State>
+            <id>Internationalization issues</id>
+          </State>
+          <State>
+            <id>Internationalization issuesJava</id>
+          </State>
+          <State>
+            <id>J2ME issuesJava</id>
+          </State>
+          <State>
+            <id>Java</id>
+          </State>
+          <State>
+            <id>Performance issuesJava</id>
+          </State>
+          <State>
+            <id>Portability issuesJava</id>
+          </State>
+          <State>
+            <id>Probable bugsJava</id>
+          </State>
+          <State>
+            <id>Threading issuesGroovy</id>
+          </State>
+          <State>
+            <id>Threading issuesJava</id>
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>Probable bugsJava</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="PackagesPane" />
+      <pane id="AndroidView" />
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="flink-parent" type="b2602c69:ProjectViewProjectNode" />
+              <item name="flink-1.6.2" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="SearchEverywhereHistoryKey" value="JobMaster&#9;FILE&#9;file:///Users/whw/Desktop/project/flink-1.6.2/flink-runtime/src/main/java/org/apache/flink/runtime/jobmaster/JobMaster.java" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$USER_HOME$/share/qunhe_inspections.xml" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="settings.editor.selected.configurable" value="org.infernus.idea.checkstyle.CheckStyleConfigurable" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    </configuration>
+    <configuration default="true" type="JUnit" factoryName="JUnit">
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <patterns />
+    </configuration>
+    <configuration default="true" type="TestNG" factoryName="TestNG">
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="SUITE_NAME" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="GROUP_NAME" />
+      <option name="TEST_OBJECT" value="CLASS" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="OUTPUT_DIRECTORY" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <option name="USE_DEFAULT_REPORTERS" value="false" />
+      <option name="PROPERTIES_FILE" />
+      <properties />
+      <listeners />
+    </configuration>
+    <configuration default="true" type="Remote" factoryName="Remote">
+      <option name="USE_SOCKET_TRANSPORT" value="true" />
+      <option name="SERVER_MODE" value="false" />
+      <option name="SHMEM_ADDRESS" value="javadebug" />
+      <option name="HOST" value="localhost" />
+      <option name="PORT" value="5005" />
+      <method />
+    </configuration>
+    <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
+      <module name="" />
+      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
+      <option name="PROGRAM_PARAMETERS" />
+      <method />
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="55087c53-94be-461e-b7f9-8c348e7c3031" name="Default" comment="" />
+      <created>1542506123882</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1542506123882</updated>
+      <workItem from="1542506125176" duration="318000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="318000" />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="17" y="23" width="1637" height="961" extended-state="0" />
+    <layout>
+      <window_info anchor="right" id="Palette" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="right" id="Palette&#9;" />
+      <window_info id="Image Layers" />
+      <window_info anchor="bottom" id="Java Enterprise" />
+      <window_info anchor="right" id="Capture Analysis" />
+      <window_info anchor="bottom" id="Event Log" side_tool="true" />
+      <window_info anchor="right" id="Maven Projects" />
+      <window_info anchor="bottom" id="Database Changes" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Version Control" show_stripe_button="false" />
+      <window_info anchor="bottom" id="CheckStyle" />
+      <window_info active="true" anchor="bottom" id="Terminal" visible="true" weight="0.35532406" />
+      <window_info id="Capture Tool" />
+      <window_info id="Designer" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24952978" />
+      <window_info anchor="right" id="Bean Validation" />
+      <window_info anchor="right" id="Database" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info id="UI Designer" />
+      <window_info anchor="right" id="Theme Preview" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info id="Favorites" side_tool="true" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/flink-runtime/src/main/java/org/apache/flink/runtime/jobmaster/JobMaster.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1370">
+          <caret line="1149" column="150" selection-start-line="1149" selection-start-column="150" selection-end-line="1149" selection-end-column="150" />
+          <folding>
+            <element signature="e#0#62472#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ArquillianSettingsConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="Copyright.UI">
+        <settings>
+          <last-edited>qunhe</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.18936567" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectJDKs.UI">
+        <settings>
+          <last-edited>1.8</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>

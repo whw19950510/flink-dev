@@ -1,0 +1,5 @@
+Comparing source compatibility of /Users/whw/Desktop/project/flink-1.6.2/flink-java/target/flink-java-1.6.2.jar against /Users/whw/.m2/repository/org/apache/flink/flink-java/1.5.0/flink-java-1.5.0.jar
+***  MODIFIED CLASS: PUBLIC org.apache.flink.api.java.operators.UnionOperator  (not serializable)
+	===  CLASS FILE FORMAT VERSION: 52.0 <- 52.0
+	+++  NEW METHOD: PUBLIC(+) org.apache.flink.api.java.operators.UnionOperator setParallelism(int)
+	+++  NEW METHOD: PUBLIC(+) SYNTHETIC(+) BRIDGE(+) org.apache.flink.api.java.operators.Operator setParallelism(int)

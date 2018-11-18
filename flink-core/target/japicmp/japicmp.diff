@@ -1,0 +1,68 @@
+Comparing source compatibility of /Users/whw/Desktop/project/flink-1.6.2/flink-core/target/flink-core-1.6.2.jar against /Users/whw/.m2/repository/org/apache/flink/flink-core/1.5.0/flink-core-1.5.0.jar
+***  MODIFIED CLASS: PUBLIC STATIC org.apache.flink.api.common.cache.DistributedCache$DistributedCacheEntry  (compatible)
+	===  CLASS FILE FORMAT VERSION: 52.0 <- 52.0
+	+++  NEW INTERFACE: java.io.Serializable
+	+++  NEW FIELD: PUBLIC(+) boolean isZipped
+	+++  NEW FIELD: PUBLIC(+) byte[] blobKey
+	+++  NEW CONSTRUCTOR: PUBLIC(+) DistributedCache$DistributedCacheEntry(java.lang.String, boolean, boolean)
+	+++  NEW CONSTRUCTOR: PUBLIC(+) DistributedCache$DistributedCacheEntry(java.lang.String, java.lang.Boolean, byte[], boolean)
+	+++  NEW CONSTRUCTOR: PUBLIC(+) DistributedCache$DistributedCacheEntry(java.lang.String, java.lang.Boolean, byte[])
+	+++  NEW METHOD: PUBLIC(+) java.lang.String toString()
+===  UNCHANGED INTERFACE: PUBLIC ABSTRACT org.apache.flink.api.common.functions.BroadcastVariableInitializer  (not serializable)
+	===  CLASS FILE FORMAT VERSION: 52.0 <- 52.0
+	+++  NEW ANNOTATION: java.lang.FunctionalInterface
+===  UNCHANGED INTERFACE: PUBLIC ABSTRACT org.apache.flink.api.common.functions.CoGroupFunction  (compatible)
+	===  CLASS FILE FORMAT VERSION: 52.0 <- 52.0
+	+++  NEW ANNOTATION: java.lang.FunctionalInterface
+===  UNCHANGED INTERFACE: PUBLIC ABSTRACT org.apache.flink.api.common.functions.CombineFunction  (compatible)
+	===  CLASS FILE FORMAT VERSION: 52.0 <- 52.0
+	+++  NEW ANNOTATION: java.lang.FunctionalInterface
+===  UNCHANGED INTERFACE: PUBLIC ABSTRACT org.apache.flink.api.common.functions.CrossFunction  (compatible)
+	===  CLASS FILE FORMAT VERSION: 52.0 <- 52.0
+	+++  NEW ANNOTATION: java.lang.FunctionalInterface
+===  UNCHANGED INTERFACE: PUBLIC ABSTRACT org.apache.flink.api.common.functions.FilterFunction  (compatible)
+	===  CLASS FILE FORMAT VERSION: 52.0 <- 52.0
+	+++  NEW ANNOTATION: java.lang.FunctionalInterface
+===  UNCHANGED INTERFACE: PUBLIC ABSTRACT org.apache.flink.api.common.functions.FlatJoinFunction  (compatible)
+	===  CLASS FILE FORMAT VERSION: 52.0 <- 52.0
+	+++  NEW ANNOTATION: java.lang.FunctionalInterface
+===  UNCHANGED INTERFACE: PUBLIC ABSTRACT org.apache.flink.api.common.functions.FlatMapFunction  (compatible)
+	===  CLASS FILE FORMAT VERSION: 52.0 <- 52.0
+	+++  NEW ANNOTATION: java.lang.FunctionalInterface
+===  UNCHANGED INTERFACE: PUBLIC ABSTRACT org.apache.flink.api.common.functions.FoldFunction  (compatible)
+	===  CLASS FILE FORMAT VERSION: 52.0 <- 52.0
+	+++  NEW ANNOTATION: java.lang.FunctionalInterface
+===  UNCHANGED INTERFACE: PUBLIC ABSTRACT org.apache.flink.api.common.functions.GroupCombineFunction  (compatible)
+	===  CLASS FILE FORMAT VERSION: 52.0 <- 52.0
+	+++  NEW ANNOTATION: java.lang.FunctionalInterface
+===  UNCHANGED INTERFACE: PUBLIC ABSTRACT org.apache.flink.api.common.functions.GroupReduceFunction  (compatible)
+	===  CLASS FILE FORMAT VERSION: 52.0 <- 52.0
+	+++  NEW ANNOTATION: java.lang.FunctionalInterface
+===  UNCHANGED INTERFACE: PUBLIC ABSTRACT org.apache.flink.api.common.functions.JoinFunction  (compatible)
+	===  CLASS FILE FORMAT VERSION: 52.0 <- 52.0
+	+++  NEW ANNOTATION: java.lang.FunctionalInterface
+===  UNCHANGED INTERFACE: PUBLIC ABSTRACT org.apache.flink.api.common.functions.MapFunction  (compatible)
+	===  CLASS FILE FORMAT VERSION: 52.0 <- 52.0
+	+++  NEW ANNOTATION: java.lang.FunctionalInterface
+===  UNCHANGED INTERFACE: PUBLIC ABSTRACT org.apache.flink.api.common.functions.MapPartitionFunction  (compatible)
+	===  CLASS FILE FORMAT VERSION: 52.0 <- 52.0
+	+++  NEW ANNOTATION: java.lang.FunctionalInterface
+===  UNCHANGED INTERFACE: PUBLIC ABSTRACT org.apache.flink.api.common.functions.Partitioner  (compatible)
+	===  CLASS FILE FORMAT VERSION: 52.0 <- 52.0
+	+++  NEW ANNOTATION: java.lang.FunctionalInterface
+===  UNCHANGED INTERFACE: PUBLIC ABSTRACT org.apache.flink.api.common.functions.ReduceFunction  (compatible)
+	===  CLASS FILE FORMAT VERSION: 52.0 <- 52.0
+	+++  NEW ANNOTATION: java.lang.FunctionalInterface
+***  MODIFIED CLASS: PUBLIC ABSTRACT org.apache.flink.api.java.tuple.Tuple  (compatible)
+	===  CLASS FILE FORMAT VERSION: 52.0 <- 52.0
+	+++  NEW METHOD: PUBLIC(+) STATIC(+) org.apache.flink.api.java.tuple.Tuple newInstance(int)
+***  MODIFIED CLASS: PUBLIC org.apache.flink.configuration.Configuration  (compatible)
+	===  CLASS FILE FORMAT VERSION: 52.0 <- 52.0
+	+++  NEW METHOD: PUBLIC(+) boolean removeConfig(org.apache.flink.configuration.ConfigOption)
+***  MODIFIED CLASS: PUBLIC org.apache.flink.configuration.UnmodifiableConfiguration  (compatible)
+	===  CLASS FILE FORMAT VERSION: 52.0 <- 52.0
+	+++  NEW METHOD: PUBLIC(+) boolean removeConfig(org.apache.flink.configuration.ConfigOption)
+***  MODIFIED CLASS: PUBLIC ABSTRACT org.apache.flink.core.fs.FileSystem  (not serializable)
+	===  CLASS FILE FORMAT VERSION: 52.0 <- 52.0
+	+++  NEW METHOD: PUBLIC(+) org.apache.flink.core.fs.RecoverableWriter createRecoverableWriter()
+		+++  NEW EXCEPTION: java.io.IOException
