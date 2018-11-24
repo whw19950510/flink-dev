@@ -12,3 +12,6 @@ buildNumber.properties
 .classpath
 .project
 */target/
+.idea
+.settings
+*/.settings
