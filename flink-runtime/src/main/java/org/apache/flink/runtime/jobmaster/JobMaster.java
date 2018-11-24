@@ -119,6 +119,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -1148,6 +1149,34 @@ public class JobMaster extends FencedRpcEndpoint<JobMasterId> implements JobMast
 	}
 
 	private ExecutionGraph createExecutionGraph(JobManagerJobMetricGroup currentJobManagerJobMetricGroup) throws JobExecutionException, JobException {
+		try {
+			ArrayList<JobID>  archivedStore = new ArrayList<>(this.highAvailabilityServices
+				.getSubmittedJobGraphStore()
+				.getJobIds());
+
+			if(!archivedStore.isEmpty()) {
+				log.warn("JOBID LIST IS {}", archivedStore.toString());
+				for(JobID curID: archivedStore) {
+					if(curID.equals(jobGraph.getJobID()))
+						continue;
+					JobGraph preJobGraph = this.highAvailabilityServices
+						.getSubmittedJobGraphStore().recoverJobGraph(curID).getJobGraph();
+
+					Map<String, List<JobVertex>> diffUnit = jobGraph
+						.findSharePossibilityWithCandidate(preJobGraph);
+					log.warn("get DiffUnit here");
+					for(JobVertex sharedVertex : diffUnit.get("shared")) {
+						log.warn("shared vertex {}", sharedVertex.toString());
+					}
+					for(JobVertex remainedVertex : diffUnit.get("remained")) {
+						log.warn("remained vertex {}", remainedVertex.toString());
+					}
+				}
+			}
+		} catch(Exception e) {
+			log.warn("can't get subttedJobGraph", e);
+		}
+
 		return ExecutionGraphBuilder.buildGraph(
 			null,
 			jobGraph,

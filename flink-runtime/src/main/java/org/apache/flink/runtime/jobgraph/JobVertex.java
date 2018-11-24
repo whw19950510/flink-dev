@@ -18,6 +18,7 @@
 
 package org.apache.flink.runtime.jobgraph;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.flink.api.common.ExecutionConfig;
 import org.apache.flink.api.common.operators.ResourceSpec;
 import org.apache.flink.configuration.Configuration;
@@ -27,8 +28,14 @@ import org.apache.flink.runtime.jobgraph.tasks.AbstractInvokable;
 import org.apache.flink.runtime.jobgraph.tasks.StoppableTask;
 import org.apache.flink.runtime.jobmanager.scheduler.CoLocationGroup;
 import org.apache.flink.runtime.jobmanager.scheduler.SlotSharingGroup;
+import org.apache.flink.shaded.guava18.com.google.common.base.Strings;
+import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.core.JsonFactory;
+import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.core.JsonGenerator;
 import org.apache.flink.util.Preconditions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +45,9 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
  * The base class for job vertexes.
  */
 public class JobVertex implements java.io.Serializable {
+	private static final String NOT_SET = "";
+	private static final String EMPTY = "{}";
+	private Logger LOG = LoggerFactory.getLogger(JobVertex.class);
 
 	private static final long serialVersionUID = 1L;
 
@@ -561,6 +571,126 @@ public class JobVertex implements java.io.Serializable {
 
 	@Override
 	public String toString() {
-		return this.name + " (" + this.invokableClassName + ')';
+		try {
+			final StringWriter writer = new StringWriter(8192);
+
+			final JsonFactory factory = new JsonFactory();
+			final JsonGenerator gen = factory.createGenerator(writer);
+
+			gen.writeStartObject();
+			// info per vertex
+			String operator = getOperatorName() != null ?
+				getOperatorName() : NOT_SET;
+
+			String operatorDescr = getOperatorDescription() != null ?
+				getOperatorDescription() : NOT_SET;
+
+			String optimizerProps = getResultOptimizerProperties() != null ?
+				getResultOptimizerProperties() : EMPTY;
+
+			String description = getOperatorPrettyName() != null ?
+				getOperatorPrettyName() : getName();
+			List<OperatorID> operatorIDsList = getOperatorIDs();
+
+			// make sure the encoding is HTML pretty
+			description = StringEscapeUtils.escapeHtml4(description);
+			description = description.replace("\n", "<br/>");
+			description = description.replace("\\", "&#92;");
+
+			operatorDescr = StringEscapeUtils.escapeHtml4(operatorDescr);
+			operatorDescr = operatorDescr.replace("\n", "<br/>");
+
+			// write the core properties
+			gen.writeStringField("vertexID", getID().toString());
+			gen.writeNumberField("parallelism", getParallelism());
+			gen.writeStringField("operatorName", operator);
+			gen.writeStringField("operator_strategy", operatorDescr);
+			gen.writeStringField("description", description);
+			if(operatorIDsList != null) {
+				gen.writeArrayFieldStart("operatorIDlists");
+				for(OperatorID curId : operatorIDsList) {
+					gen.writeStartObject();
+					gen.writeBinaryField("OperatorIds", curId.getBytes());
+					gen.writeEndObject();
+				}
+				gen.writeEndArray();
+			}
+
+			if(!Strings.isNullOrEmpty(this.getInvokableClassName())) {
+				String invokableClass = this.getInvokableClassName();
+				gen.writeStringField("invokable", invokableClass);
+			}
+			if(!Strings.isNullOrEmpty(this.getSlotSharingGroup().toString())) {
+				String slotSharingGroupStr = this.getSlotSharingGroup().toString();
+				gen.writeStringField("slotSharingGroupStr", slotSharingGroupStr);
+			}
+			if(this.getCoLocationGroup() != null) {
+				String colocateGroupStr =  this.getCoLocationGroup().getId().toString();
+				gen.writeStringField("colocateGroupStr", colocateGroupStr);
+			}
+
+			if (!this.isInputVertex()) {
+				// write the input edge properties
+				gen.writeArrayFieldStart("inputs");
+
+				// producer of the current vertex
+				List<JobEdge> inputs = this.getInputs();
+				for (int inputNum = 0; inputNum < inputs.size(); inputNum++) {
+					JobEdge edge = inputs.get(inputNum);
+					// if no source for edge
+					if (edge.getSource() == null) {
+						continue;
+					}
+
+					JobVertex predecessor = edge.getSource().getProducer();    // former producer
+					String shipStrategy = edge.getShipStrategyName() == null ? NOT_SET : edge.getShipStrategyName();
+					String distributionPattern = edge.getDistributionPattern().getName() == null
+						? NOT_SET : edge.getDistributionPattern().getName();
+
+					String preProcessingOperation = edge.getPreProcessingOperationName() == null
+						? NOT_SET : edge.getPreProcessingOperationName();
+					String operatorLevelCaching = edge.getOperatorLevelCachingDescription() ==
+						null ? NOT_SET : edge.getOperatorLevelCachingDescription();
+					gen.writeStartObject();
+
+					if(predecessor != null) {
+						gen.writeStringField("predessorVertexid", predecessor.getID().toString());
+					}
+					gen.writeNumberField("inputNum", inputNum);
+
+
+
+					gen.writeStringField("ship_strategy", shipStrategy);
+					gen.writeStringField("local_strategy", preProcessingOperation);
+					gen.writeStringField("caching", operatorLevelCaching);
+					gen.writeStringField("distributedPattern", distributionPattern);
+					gen.writeStringField("exchange",
+						edge.getSource().getResultType().name().toLowerCase());
+
+					gen.writeEndObject();
+				}
+				gen.writeEndArray();
+			}
+			gen.writeArrayFieldStart("IntermediateDataset");
+			for(int outputNum = 0; outputNum < results.size(); outputNum++) {
+				gen.writeStartObject();
+				gen.writeStringField("DatasetId", results.get(outputNum) != null ? results.get
+					(outputNum).getId().toString() : NOT_SET);
+				gen.writeStringField("DatasetResultType", results.get(outputNum)
+					.getResultType() != null ? results.get(outputNum).getResultType().name() : NOT_SET);
+				gen.writeEndObject();
+			}
+			gen.writeEndArray();
+			// write the optimizer properties
+			gen.writeFieldName("optimizer_properties");
+			gen.writeRawValue(optimizerProps);
+			gen.writeEndObject();
+
+			gen.close();
+			return writer.toString();
+		} catch (Exception e) {
+			LOG.error("can't generate Jobvertex info", e);
+		}
+		return null;
 	}
 }

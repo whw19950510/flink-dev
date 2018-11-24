@@ -28,6 +28,8 @@ import org.apache.flink.runtime.blob.PermanentBlobKey;
 import org.apache.flink.runtime.jobgraph.tasks.JobCheckpointingSettings;
 import org.apache.flink.util.InstantiationUtil;
 import org.apache.flink.util.SerializedValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -56,6 +58,7 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
  * define the characteristics of the concrete operation and intermediate data.
  */
 public class JobGraph implements Serializable {
+	private Logger LOG = LoggerFactory.getLogger(JobGraph.class);
 
 	private static final long serialVersionUID = 1L;
 
@@ -590,5 +593,56 @@ public class JobGraph implements Serializable {
 				jobConfiguration
 			);
 		}
+	}
+
+	public Map<String, List<JobVertex>> findSharePossibilityWithCandidate(JobGraph candidate) {
+		List<JobVertex> currentGraphVertices = this.getVerticesSortedTopologicallyFromSources();
+		List<JobVertex> candidateGraphVertices = candidate
+			.getVerticesSortedTopologicallyFromSources();
+		int index = 0;
+		Map<String, List<JobVertex>> ansVertex = new HashMap<>();
+		ansVertex.put("shared", new ArrayList<>());
+		ansVertex.put("remained", new ArrayList<>());
+
+		boolean equalsOperator = true;
+		while(index < currentGraphVertices.size() && index < candidateGraphVertices.size()) {
+			List<OperatorID> currentOperatorIDList = currentGraphVertices.get(index)
+				.getOperatorIDs();
+			List<OperatorID> candidateOperatorIDList = candidateGraphVertices.get(index)
+				.getOperatorIDs();
+			if(currentOperatorIDList.size() != candidateOperatorIDList.size()) {
+				break;
+			}
+			LOG.warn("currentVertics {}", currentGraphVertices.get(index).toString());
+			LOG.warn("candidateVertics {}", candidateGraphVertices.get(index).toString());
+
+			int compareIdx = 0;
+			while(compareIdx < currentOperatorIDList.size()) {
+				LOG.warn("need to comapre separate IDList {} {}", currentOperatorIDList.get
+					(compareIdx), candidateOperatorIDList.get(compareIdx));
+
+				if(0 != currentOperatorIDList.get(compareIdx).compareTo(candidateOperatorIDList.get
+					(compareIdx))) {
+					LOG.warn("not equals!!!! {}", candidateGraphVertices.get(index).toString());
+					equalsOperator = false;
+					break;
+				}
+				compareIdx ++;
+			}
+			if(equalsOperator) {
+				ansVertex.get("shared").add(currentGraphVertices.get(index));
+				LOG.warn("added shared vertex");
+			} else {
+				break;
+			}
+			index++;
+		}
+		while(index < currentGraphVertices.size()) {
+			ansVertex.get("remained").add(currentGraphVertices.get(index));
+			LOG.warn("added remained vertex");
+			index++;
+		}
+
+		return ansVertex;
 	}
 }

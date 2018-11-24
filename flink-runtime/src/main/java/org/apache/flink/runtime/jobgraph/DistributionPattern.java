@@ -31,12 +31,21 @@ public enum DistributionPattern {
 	 * <p>
 	 * {@link ExecutionVertex#connectAllToAll(org.apache.flink.runtime.executiongraph.IntermediateResultPartition[], int)}
 	 */
-	ALL_TO_ALL,
+	ALL_TO_ALL("ALL_TO_ALL"),
 
 	/**
 	 * Each producing sub task is connected to one or more subtask(s) of the consuming task.
 	 * <p>
 	 * {@link ExecutionVertex#connectPointwise(org.apache.flink.runtime.executiongraph.IntermediateResultPartition[], int)}
 	 */
-	POINTWISE
+	POINTWISE("POINTWISE");
+
+	private final String name;
+	private DistributionPattern(final String name) {
+		this.name = name;
+	}
+	public String getName() {
+		return name;
+	}
+
 }
