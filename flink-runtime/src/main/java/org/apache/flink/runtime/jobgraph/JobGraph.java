@@ -637,8 +637,9 @@ public class JobGraph implements Serializable {
 			}
 			index++;
 		}
-		while(index < currentGraphVertices.size()) {
-			ansVertex.get("remained").add(currentGraphVertices.get(index));
+		// Regard the original graph's remain vertex as remained vertex
+		while(index < candidateGraphVertices.size()) {
+			ansVertex.get("remained").add(candidateGraphVertices.get(index));
 			LOG.warn("added remained vertex");
 			index++;
 		}

@@ -628,6 +628,13 @@ public class JobVertex implements java.io.Serializable {
 				String colocateGroupStr =  this.getCoLocationGroup().getId().toString();
 				gen.writeStringField("colocateGroupStr", colocateGroupStr);
 			}
+			if(this.getConfiguration() != null) {
+				gen.writeStringField("jobconfig", this.getConfiguration().toString());
+			}
+
+			if(this.getInputSplitSource() != null) {
+				gen.writeStringField("inputSplitSource", this.getInputSplitSource().toString());
+			}
 
 			if (!this.isInputVertex()) {
 				// write the input edge properties
@@ -692,5 +699,9 @@ public class JobVertex implements java.io.Serializable {
 			LOG.error("can't generate Jobvertex info", e);
 		}
 		return null;
+	}
+
+	public void removeInputs() {
+		inputs.clear();
 	}
 }

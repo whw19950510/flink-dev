@@ -59,12 +59,17 @@ import org.apache.flink.runtime.heartbeat.HeartbeatServices;
 import org.apache.flink.runtime.heartbeat.HeartbeatTarget;
 import org.apache.flink.runtime.highavailability.HighAvailabilityServices;
 import org.apache.flink.runtime.io.network.partition.ResultPartitionID;
+import org.apache.flink.runtime.io.network.partition.ResultPartitionType;
+import org.apache.flink.runtime.jobgraph.DistributionPattern;
+import org.apache.flink.runtime.jobgraph.IntermediateDataSet;
 import org.apache.flink.runtime.jobgraph.IntermediateDataSetID;
+import org.apache.flink.runtime.jobgraph.JobEdge;
 import org.apache.flink.runtime.jobgraph.JobGraph;
 import org.apache.flink.runtime.jobgraph.JobStatus;
 import org.apache.flink.runtime.jobgraph.JobVertex;
 import org.apache.flink.runtime.jobgraph.JobVertexID;
 import org.apache.flink.runtime.jobgraph.SavepointRestoreSettings;
+import org.apache.flink.runtime.jobgraph.jsonplan.JsonPlanGenerator;
 import org.apache.flink.runtime.jobmanager.OnCompletionActions;
 import org.apache.flink.runtime.jobmanager.PartitionProducerDisposedException;
 import org.apache.flink.runtime.jobmaster.exceptions.JobModificationException;
@@ -1171,11 +1176,51 @@ public class JobMaster extends FencedRpcEndpoint<JobMasterId> implements JobMast
 					for(JobVertex remainedVertex : diffUnit.get("remained")) {
 						log.warn("remained vertex {}", remainedVertex.toString());
 					}
+					// just connect the remained vertex to the entrance of the original graph
+					List<JobVertex> remainedVertex = diffUnit.get("remained");
+					List<JobVertex> sharedVertex = diffUnit.get("shared");
+					if(!remainedVertex.isEmpty() && !sharedVertex.isEmpty()) {
+						JobVertex predecessor = sharedVertex.get(sharedVertex.size() - 1);
+						// former
+						// producer
+						DistributionPattern originalPattern = DistributionPattern.ALL_TO_ALL;
+						ResultPartitionType originalType = ResultPartitionType.PIPELINED_BOUNDED;
+						String shipStrategyName = null;
+						String preprocessingOpsName = null;
+						String operatorLevelCachingDescription = null;
+
+						for(JobEdge curEdge: remainedVertex.get(0).getInputs()) {
+							if(curEdge.getSource().getProducer().getID().equals(predecessor.getID
+								())) {
+								log.warn("remained {}", remainedVertex.get(0).toString());
+								originalPattern = curEdge.getDistributionPattern();
+								originalType = curEdge.getSource().getResultType();
+								shipStrategyName = curEdge.getShipStrategyName();
+								preprocessingOpsName = curEdge.getPreProcessingOperationName();
+								operatorLevelCachingDescription = curEdge.getOperatorLevelCachingDescription();
+							}
+						}
+						log.warn("shared vertex {}", predecessor.toString());
+						remainedVertex.get(0).removeInputs();
+						remainedVertex.get(0).connectNewDataSetAsInput(predecessor, originalPattern, originalType);
+						log.warn("shipStrategy name {} level {} preprocessing {}",
+							shipStrategyName, operatorLevelCachingDescription, preprocessingOpsName);
+
+//						newEdge.setShipStrategyName(shipStrategyName);
+//						newEdge.setOperatorLevelCachingDescription(operatorLevelCachingDescription);
+//						newEdge.setPreProcessingOperationName(preprocessingOpsName);
+
+						for(JobVertex remainVertex : remainedVertex) {
+							jobGraph.addVertex(remainVertex);
+						}
+					}
 				}
 			}
 		} catch(Exception e) {
 			log.warn("can't get subttedJobGraph", e);
 		}
+
+//		log.info(JsonPlanGenerator.generatePlan(this.jobGraph));
 
 		return ExecutionGraphBuilder.buildGraph(
 			null,
