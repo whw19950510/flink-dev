@@ -171,6 +171,12 @@ public class StreamingJobGraphGenerator {
 					"This indicates that non-serializable types (like custom serializers) were registered");
 		}
 
+		for (Map.Entry<Integer, StreamConfig> entry: vertexConfigs.entrySet()) {
+			LOG.info("Entry!!!!!!");
+//			ClassLoader cl = getClass().getClassLoader();
+//			LOG.info(entry.getValue().getOutEdges(cl).toString());
+		}
+
 		return jobGraph;
 	}
 

@@ -25,24 +25,18 @@ import org.apache.flink.api.common.cache.DistributedCache;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.core.fs.Path;
 import org.apache.flink.runtime.blob.PermanentBlobKey;
+import org.apache.flink.runtime.executiongraph.ExecutionGraph;
 import org.apache.flink.runtime.jobgraph.tasks.JobCheckpointingSettings;
 import org.apache.flink.util.InstantiationUtil;
 import org.apache.flink.util.SerializedValue;
+import org.apache.hadoop.mapreduce.Job;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
@@ -58,9 +52,9 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
  * define the characteristics of the concrete operation and intermediate data.
  */
 public class JobGraph implements Serializable {
-	private Logger LOG = LoggerFactory.getLogger(JobGraph.class);
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVerFsionUID = 1L;
+	static final Logger LOG = LoggerFactory.getLogger(JobGraph.class);
 
 	// --- job and configuration ---
 
@@ -110,6 +104,7 @@ public class JobGraph implements Serializable {
 
 	/** List of classpaths required to run this job. */
 	private List<URL> classpaths = Collections.emptyList();
+
 
 	// --------------------------------------------------------------------------------------------
 
@@ -595,55 +590,99 @@ public class JobGraph implements Serializable {
 		}
 	}
 
-	public Map<String, List<JobVertex>> findSharePossibilityWithCandidate(JobGraph candidate) {
-		List<JobVertex> currentGraphVertices = this.getVerticesSortedTopologicallyFromSources();
-		List<JobVertex> candidateGraphVertices = candidate
-			.getVerticesSortedTopologicallyFromSources();
-		int index = 0;
-		Map<String, List<JobVertex>> ansVertex = new HashMap<>();
-		ansVertex.put("shared", new ArrayList<>());
-		ansVertex.put("remained", new ArrayList<>());
-
-		boolean equalsOperator = true;
-		while(index < currentGraphVertices.size() && index < candidateGraphVertices.size()) {
-			List<OperatorID> currentOperatorIDList = currentGraphVertices.get(index)
-				.getOperatorIDs();
-			List<OperatorID> candidateOperatorIDList = candidateGraphVertices.get(index)
-				.getOperatorIDs();
-			if(currentOperatorIDList.size() != candidateOperatorIDList.size()) {
-				break;
+	public boolean isShareable(JobGraph other) {
+		List<JobVertex> source = new ArrayList<>();
+		for (JobVertex v: other.getVertices()) {
+			if (v.isInputVertex()) {
+				source.add(v);
 			}
-			LOG.warn("currentVertics {}", currentGraphVertices.get(index).toString());
-			LOG.warn("candidateVertics {}", candidateGraphVertices.get(index).toString());
+		}
 
-			int compareIdx = 0;
-			while(compareIdx < currentOperatorIDList.size()) {
-				LOG.warn("need to comapre separate IDList {} {}", currentOperatorIDList.get
-					(compareIdx), candidateOperatorIDList.get(compareIdx));
-
-				if(0 != currentOperatorIDList.get(compareIdx).compareTo(candidateOperatorIDList.get
-					(compareIdx))) {
-					LOG.warn("not equals!!!! {}", candidateGraphVertices.get(index).toString());
-					equalsOperator = false;
-					break;
+		for (JobVertex otherVertex: other.getVertices()) {
+			if (!otherVertex.isInputVertex()) {
+				continue;
+			}
+			for (JobVertex sourceVertex: source) {
+				if (otherVertex.getID().equals(sourceVertex.getID())) {
+					return true;
 				}
-				compareIdx ++;
 			}
-			if(equalsOperator) {
-				ansVertex.get("shared").add(currentGraphVertices.get(index));
-				LOG.warn("added shared vertex");
-			} else {
-				break;
-			}
-			index++;
 		}
-		// Regard the original graph's remain vertex as remained vertex
-		while(index < candidateGraphVertices.size()) {
-			ansVertex.get("remained").add(candidateGraphVertices.get(index));
-			LOG.warn("added remained vertex");
-			index++;
+		return false;
+	}
+
+	public Map<JobVertexID, List<JobVertexID>> getShareLink(JobGraph newGraph) {
+		Map<JobVertexID, JobVertexID> share = new HashMap<>();
+		Map<JobVertexID, List<JobVertexID>> link = new HashMap<>();
+
+		List<JobVertex> original = new ArrayList<>(this.getVerticesSortedTopologicallyFromSources());
+
+		// Set all sharable to false
+		for (JobVertex v: original) {
+			v.setShareable(false);
+			v.setShareVertex(null);
 		}
 
-		return ansVertex;
+		for (JobVertex v: original) {
+			if (v.isInputVertex()) {
+				// for source vertices
+				JobVertex v2 = newGraph.findVertexByID(v.getID());
+				if (v2 != null) {
+					share.put(v.getID(), v2.getID());
+					LOG.info(v.getID() + "->" + v2.getID());
+					v.setShareable(true);
+					v2.setShareVertex(v.getID());
+				}
+			} else {
+				// get parent nodes
+				List<JobVertex> parents = new ArrayList<>();
+				boolean allParentsShared = true;
+				for (JobEdge edge: v.getInputs()) {
+					JobVertex parent = edge.getSource().getProducer();
+					if (!share.containsKey(parent.getID())) {
+						allParentsShared = false;
+						break;
+					}
+					parents.add(parent);
+				}
+
+				if (allParentsShared && !parents.isEmpty()) {
+					JobVertexID potentialParentID = share.get(parents.get(0).getID());
+					JobVertex potentialParent = newGraph.findVertexByID(potentialParentID);
+					JobVertex v2 = null;
+
+					for (IntermediateDataSet dataSet : potentialParent.getProducedDataSets()) {
+						for (JobEdge edge : dataSet.getConsumers()) {
+							JobVertex potential = edge.getTarget();
+							HashSet<OperatorID> opID = new HashSet<>(v.getOperatorIDs());
+							HashSet<OperatorID> opID2 = new HashSet<>(potential.getOperatorIDs());
+
+							if (opID.equals(opID2)) {
+								v2 = potential;
+								break;
+							}
+						}
+					}
+
+					if (v2 != null) {
+						share.put(v.getID(), v2.getID());
+						LOG.info(v.getID() + "->" + v2.getID());
+						v.setShareable(true);
+						v2.setShareVertex(v.getID());
+					} else {
+						List<JobVertexID> newParentsID = new ArrayList<>();
+						for (JobVertex parent: parents) {
+							newParentsID.add(share.get(parent.getID()));
+						}
+						link.put(v.getID(), newParentsID);
+					}
+				}
+
+			}
+		}
+
+		return link;
 	}
+
+
 }

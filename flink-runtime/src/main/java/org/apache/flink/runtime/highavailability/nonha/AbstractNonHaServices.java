@@ -26,6 +26,7 @@ import org.apache.flink.runtime.highavailability.HighAvailabilityServices;
 import org.apache.flink.runtime.highavailability.RunningJobsRegistry;
 import org.apache.flink.runtime.highavailability.nonha.standalone.StandaloneRunningJobsRegistry;
 import org.apache.flink.runtime.jobmanager.StandaloneSubmittedJobGraphStore;
+import org.apache.flink.runtime.jobmanager.SubmittedJobGraph;
 import org.apache.flink.runtime.jobmanager.SubmittedJobGraphStore;
 
 import javax.annotation.concurrent.GuardedBy;
@@ -46,13 +47,15 @@ public abstract class AbstractNonHaServices implements HighAvailabilityServices 
 
 	private final VoidBlobStore voidBlobStore;
 
-	private boolean shutdown;
 	private final SubmittedJobGraphStore submittedJobGraphStore;
+
+	private boolean shutdown;
 
 	public AbstractNonHaServices() {
 		this.runningJobsRegistry = new StandaloneRunningJobsRegistry();
 		this.voidBlobStore = new VoidBlobStore();
 		this.submittedJobGraphStore = new StandaloneSubmittedJobGraphStore();
+
 		shutdown = false;
 	}
 
@@ -74,7 +77,7 @@ public abstract class AbstractNonHaServices implements HighAvailabilityServices 
 		synchronized (lock) {
 			checkNotShutdown();
 
-			return submittedJobGraphStore;
+			return this.submittedJobGraphStore;
 		}
 	}
 

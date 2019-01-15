@@ -77,7 +77,8 @@ public class IntermediateResultPartition {
 
 		// NOTE: currently we support only one consumer per result!!!
 		if (pos != 0) {
-			throw new RuntimeException("Currently, each intermediate result can only have one consumer.");
+			return 0;
+//			throw new RuntimeException("Currently, each intermediate result can only have one consumer.");
 		}
 
 		consumers.add(new ArrayList<ExecutionEdge>());

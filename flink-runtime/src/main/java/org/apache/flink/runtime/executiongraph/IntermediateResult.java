@@ -140,7 +140,7 @@ public class IntermediateResult {
 
 	public int registerConsumer() {
 		final int index = numConsumers;
-		numConsumers++;
+//		numConsumers++;
 
 		for (IntermediateResultPartition p : partitions) {
 			if (p.addConsumerGroup() != index) {
