@@ -18,17 +18,13 @@
 
 package org.apache.flink.runtime.jobmanager;
 
-import org.apache.commons.logging.LogFactory;
+import com.esotericsoftware.minlog.Log;
 import org.apache.flink.api.common.JobID;
 import org.apache.flink.runtime.jobgraph.JobGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 /**
  * {@link SubmittedJobGraph} instances for JobManagers running in {@link HighAvailabilityMode#NONE}.
@@ -37,14 +33,13 @@ import java.util.stream.Collectors;
  * recovery mode.
  */
 public class StandaloneSubmittedJobGraphStore implements SubmittedJobGraphStore {
-	private List<SubmittedJobGraph> submittedJobGraphList;
-
-	public StandaloneSubmittedJobGraphStore() {
-		submittedJobGraphList = new ArrayList<>();
-	}
 
 	protected final Logger log = LoggerFactory.getLogger(getClass());
+	private final List<SubmittedJobGraph> jobGraphs;
 
+	public StandaloneSubmittedJobGraphStore() {
+		this.jobGraphs = new ArrayList<>();
+	}
 
 	@Override
 	public void start(SubmittedJobGraphListener jobGraphListener) throws Exception {
@@ -58,22 +53,18 @@ public class StandaloneSubmittedJobGraphStore implements SubmittedJobGraphStore 
 
 	@Override
 	public void putJobGraph(SubmittedJobGraph jobGraph) {
+		this.jobGraphs.add(jobGraph);
+		log.info("job graph added");
+		log.info("new job id {}", jobGraph.getJobId());
+		log.info("TOTAL JOB: " + this.jobGraphs.size());
 		// Nothing to do
-		for(SubmittedJobGraph cur: submittedJobGraphList) {
-			if(cur.getJobId().equals(jobGraph.getJobId()))
-				return;
-		}
-		submittedJobGraphList.add(jobGraph);
 	}
 
 	@Override
 	public void removeJobGraph(JobID jobId) {
-		// Nothing to do
-		int candidate = Integer.MAX_VALUE;
-		for(int i = 0; i <  submittedJobGraphList.size(); i++) {
-			if(jobId.equals(submittedJobGraphList.get(i).getJobId())) {
-				submittedJobGraphList.remove(candidate);
-				log.warn("remove one jobGraph from list {}", candidate);
+		for (SubmittedJobGraph jobGraph: this.jobGraphs) {
+			if (jobGraph.getJobId().equals(jobId)) {
+				this.jobGraphs.remove(jobGraph);
 				return;
 			}
 		}
@@ -86,19 +77,30 @@ public class StandaloneSubmittedJobGraphStore implements SubmittedJobGraphStore 
 
 	@Override
 	public Collection<JobID> getJobIds() {
-		List<JobID> result = new ArrayList<>();
-		for(SubmittedJobGraph cur : submittedJobGraphList) {
-			result.add(cur.getJobId());
+		log.info("TOTAL JOBs " + this.jobGraphs.size());
+		Set<JobID> result = new HashSet<>();
+		for (SubmittedJobGraph j: this.jobGraphs) {
+			result.add(j.getJobId());
 		}
 		return result;
 	}
 
 	@Override
 	public SubmittedJobGraph recoverJobGraph(JobID jobId) {
-		for(SubmittedJobGraph cur: submittedJobGraphList) {
-			if(jobId.equals(cur.getJobId()))
-				return cur;
+		for (SubmittedJobGraph jobGraph: this.jobGraphs) {
+			if (jobGraph.getJobId().equals(jobId)) {
+				return jobGraph;
+			}
 		}
 		return null;
+	}
+
+	public boolean isShareable(SubmittedJobGraph newJobGraph) {
+		for (SubmittedJobGraph jobGraph: this.jobGraphs) {
+			if (jobGraph.getJobGraph().isShareable(newJobGraph.getJobGraph())) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

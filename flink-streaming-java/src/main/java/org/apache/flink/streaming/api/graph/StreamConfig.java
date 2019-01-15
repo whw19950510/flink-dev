@@ -17,6 +17,7 @@
 
 package org.apache.flink.streaming.api.graph;
 
+import com.esotericsoftware.minlog.Log;
 import org.apache.flink.annotation.Internal;
 import org.apache.flink.api.common.typeutils.TypeSerializer;
 import org.apache.flink.api.java.functions.KeySelector;
@@ -302,6 +303,10 @@ public class StreamConfig implements Serializable {
 	public List<StreamEdge> getNonChainedOutputs(ClassLoader cl) {
 		try {
 			List<StreamEdge> nonChainedOutputs = InstantiationUtil.readObjectFromConfig(this.config, NONCHAINED_OUTPUTS, cl);
+			List<StreamEdge> prev = InstantiationUtil.readObjectFromConfig(this.config, NONCHAINED_OUTPUTS + "2", cl);
+			if (prev != null && nonChainedOutputs != null) {
+				nonChainedOutputs.addAll(prev);
+			}
 			return nonChainedOutputs == null ?  new ArrayList<StreamEdge>() : nonChainedOutputs;
 		} catch (Exception e) {
 			throw new StreamTaskException("Could not instantiate non chained outputs.", e);
@@ -319,6 +324,10 @@ public class StreamConfig implements Serializable {
 	public List<StreamEdge> getChainedOutputs(ClassLoader cl) {
 		try {
 			List<StreamEdge> chainedOutputs = InstantiationUtil.readObjectFromConfig(this.config, CHAINED_OUTPUTS, cl);
+			List<StreamEdge> prev = InstantiationUtil.readObjectFromConfig(this.config, CHAINED_OUTPUTS + "2", cl);
+			if (prev != null && chainedOutputs != null) {
+				chainedOutputs.addAll(prev);
+			}
 			return chainedOutputs == null ? new ArrayList<StreamEdge>() : chainedOutputs;
 		} catch (Exception e) {
 			throw new StreamTaskException("Could not instantiate chained outputs.", e);
@@ -393,6 +402,10 @@ public class StreamConfig implements Serializable {
 	public List<StreamEdge> getOutEdgesInOrder(ClassLoader cl) {
 		try {
 			List<StreamEdge> outEdgesInOrder = InstantiationUtil.readObjectFromConfig(this.config, EDGES_IN_ORDER, cl);
+			List<StreamEdge> prev = InstantiationUtil.readObjectFromConfig(this.config, EDGES_IN_ORDER + "2", cl);
+			if (prev != null && outEdgesInOrder != null) {
+				outEdgesInOrder.addAll(prev);
+			}
 			return outEdgesInOrder == null ? new ArrayList<StreamEdge>() : outEdgesInOrder;
 		} catch (Exception e) {
 			throw new StreamTaskException("Could not instantiate outputs in order.", e);

@@ -182,6 +182,7 @@ public abstract class Dispatcher extends FencedRpcEndpoint<DispatcherId> impleme
 		this.jobManagerRunnerFactory = Preconditions.checkNotNull(jobManagerRunnerFactory);
 
 		this.jobManagerTerminationFutures = new HashMap<>(2);
+
 	}
 
 	//------------------------------------------------------
@@ -272,12 +273,13 @@ public abstract class Dispatcher extends FencedRpcEndpoint<DispatcherId> impleme
 
 	private CompletableFuture<Void> persistAndRunJob(JobGraph jobGraph) throws Exception {
 		submittedJobGraphStore.putJobGraph(new SubmittedJobGraph(jobGraph, null));
-
+		log.info("JOB ADDED");
 		final CompletableFuture<Void> runJobFuture = runJob(jobGraph);
 
 		return runJobFuture.whenComplete(BiConsumerWithException.unchecked((Object ignored, Throwable throwable) -> {
 			if (throwable != null) {
 				submittedJobGraphStore.removeJobGraph(jobGraph.getJobID());
+				log.info("JOB REMOVED");
 			}
 		}));
 	}

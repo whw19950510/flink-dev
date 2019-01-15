@@ -58,20 +58,15 @@ import org.apache.flink.runtime.heartbeat.HeartbeatManager;
 import org.apache.flink.runtime.heartbeat.HeartbeatServices;
 import org.apache.flink.runtime.heartbeat.HeartbeatTarget;
 import org.apache.flink.runtime.highavailability.HighAvailabilityServices;
+import org.apache.flink.runtime.io.network.partition.ResultPartition;
 import org.apache.flink.runtime.io.network.partition.ResultPartitionID;
 import org.apache.flink.runtime.io.network.partition.ResultPartitionType;
-import org.apache.flink.runtime.jobgraph.DistributionPattern;
-import org.apache.flink.runtime.jobgraph.IntermediateDataSet;
-import org.apache.flink.runtime.jobgraph.IntermediateDataSetID;
-import org.apache.flink.runtime.jobgraph.JobEdge;
-import org.apache.flink.runtime.jobgraph.JobGraph;
-import org.apache.flink.runtime.jobgraph.JobStatus;
-import org.apache.flink.runtime.jobgraph.JobVertex;
-import org.apache.flink.runtime.jobgraph.JobVertexID;
-import org.apache.flink.runtime.jobgraph.SavepointRestoreSettings;
+import org.apache.flink.runtime.jobgraph.*;
 import org.apache.flink.runtime.jobgraph.jsonplan.JsonPlanGenerator;
 import org.apache.flink.runtime.jobmanager.OnCompletionActions;
 import org.apache.flink.runtime.jobmanager.PartitionProducerDisposedException;
+import org.apache.flink.runtime.jobmanager.SubmittedJobGraph;
+import org.apache.flink.runtime.jobmanager.SubmittedJobGraphStore;
 import org.apache.flink.runtime.jobmaster.exceptions.JobModificationException;
 import org.apache.flink.runtime.jobmaster.factories.JobManagerJobMetricGroupFactory;
 import org.apache.flink.runtime.jobmaster.message.ClassloadingProps;
@@ -82,6 +77,7 @@ import org.apache.flink.runtime.leaderretrieval.LeaderRetrievalListener;
 import org.apache.flink.runtime.leaderretrieval.LeaderRetrievalService;
 import org.apache.flink.runtime.messages.Acknowledge;
 import org.apache.flink.runtime.messages.FlinkJobNotFoundException;
+import org.apache.flink.runtime.messages.JobManagerMessages;
 import org.apache.flink.runtime.messages.checkpoint.AcknowledgeCheckpoint;
 import org.apache.flink.runtime.messages.checkpoint.DeclineCheckpoint;
 import org.apache.flink.runtime.messages.webmonitor.JobDetails;
@@ -119,17 +115,7 @@ import javax.annotation.Nullable;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
@@ -274,6 +260,86 @@ public class JobMaster extends FencedRpcEndpoint<JobMasterId> implements JobMast
 
 		log.info("Initializing job {} ({}).", jobName, jid);
 
+		SubmittedJobGraphStore store = this.highAvailabilityServices.getSubmittedJobGraphStore();
+
+		if (store.getJobIds().size() == 2) {
+			JobGraph prevJobGraph = this.jobGraph;
+			for (JobID id : store.getJobIds()) {
+				if (!id.equals(this.jobGraph.getJobID())) {
+					prevJobGraph = store.recoverJobGraph(id).getJobGraph();
+					break;
+				}
+			}
+
+			log.info("+++++++++");
+			Map<JobVertexID, List<JobVertexID>> shareLink = prevJobGraph.getShareLink(this.jobGraph);
+			for (Map.Entry<JobVertexID, List<JobVertexID>> entry: shareLink.entrySet()) {
+				log.info(entry.getKey().toString());
+				entry.getValue().forEach(v -> log.info("-->" + v.toString()));
+			}
+
+
+//			JobVertex source = this.jobGraph.getVerticesSortedTopologicallyFromSources().get(0);
+
+			List<JobVertex> prevVertices = prevJobGraph.getVerticesSortedTopologicallyFromSources();
+			for (JobVertex prevVertex: prevVertices) {
+//				if (!prevVertex.isInputVertex()) {
+//
+//					if (!prevVertex.isOutputVertex()) {
+//						DistributionPattern pattern = prevVertex.getInputs().get(0).getDistributionPattern();
+//						ResultPartitionType type = prevVertex.getInputs().get(0).getSource().getResultType();
+//						prevVertex.removeInputs();
+////						prevVertex.connectDataSetAsInput(source.getProducedDataSets().get(0), pattern);
+//						prevVertex.connectNewDataSetAsInput(source, pattern, type);
+//						log.info(pattern.name());
+//						log.info(type.name());
+//
+//					}
+//
+//					prevVertex.updateCoLocationGroup(source.getCoLocationGroup());
+//					this.jobGraph.addVertex(prevVertex);
+//				} else {
+//					byte[] co = prevVertex.getConfiguration().getBytes("chainedOutputs", null);
+//					source.getConfiguration().setBytes("chainedOutputs2", co);
+//					byte[] nco = prevVertex.getConfiguration().getBytes("nonChainedOutputs", null);
+//					source.getConfiguration().setBytes("nonChainedOutputs2", nco);
+//					byte[] eio = prevVertex.getConfiguration().getBytes("edgesInOrder", null);
+//					source.getConfiguration().setBytes("edgesInOrder2", eio);
+//				}
+				if (!prevVertex.isShareable()) {
+					this.jobGraph.addVertex(prevVertex);
+				}
+				if (shareLink.containsKey(prevVertex.getID())) {
+					List<JobVertex> newParents = new ArrayList<>();
+					for (JobVertexID pid: shareLink.get(prevVertex.getID())) {
+						newParents.add(this.jobGraph.findVertexByID(pid));
+					}
+					DistributionPattern pattern = prevVertex.getInputs().get(0).getDistributionPattern();
+					ResultPartitionType type = prevVertex.getInputs().get(0).getSource().getResultType();
+					prevVertex.removeInputs();
+					for (JobVertex newParent: newParents) {
+						prevVertex.connectNewDataSetAsInput(newParent, pattern, type);
+
+						// update config
+						JobVertex oldParent = prevJobGraph.findVertexByID(newParent.getShareVertex());
+						log.info("new parent: ");
+						byte[] co = oldParent.getConfiguration().getBytes("chainedOutputs", null);
+						newParent.getConfiguration().setBytes("chainedOutputs2", co);
+						byte[] nco = oldParent.getConfiguration().getBytes("nonChainedOutputs", null);
+						newParent.getConfiguration().setBytes("nonChainedOutputs2", nco);
+						byte[] eio = oldParent.getConfiguration().getBytes("outStreamEdges", null);
+						newParent.getConfiguration().setBytes("edgesInOrder2", eio);
+					}
+					prevVertex.updateCoLocationGroup(newParents.get(0).getCoLocationGroup());
+				}
+			}
+
+			log.info(JsonPlanGenerator.generatePlan(prevJobGraph));
+			log.info(JsonPlanGenerator.generatePlan(this.jobGraph));
+
+		}
+
+
 		final RestartStrategies.RestartStrategyConfiguration restartStrategyConfiguration =
 				jobGraph.getSerializedExecutionConfig()
 						.deserializeValue(userCodeLoader)
@@ -302,6 +368,20 @@ public class JobMaster extends FencedRpcEndpoint<JobMasterId> implements JobMast
 
 		this.resourceManagerConnection = null;
 		this.establishedResourceManagerConnection = null;
+
+		log.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
+
+		for (JobID id: store.getJobIds()) {
+			log.info("RUNNING jobIIIIIDDDD: " + id);
+			JobGraph jp = store.recoverJobGraph(id).getJobGraph();
+			log.info(JsonPlanGenerator.generatePlan(jp));
+			for (JobVertex v: jp.getVerticesSortedTopologicallyFromSources()) {
+				log.info("VERTEX");
+				log.info(v.toString());
+				log.info(v.getConfiguration().toMap().toString());
+			}
+		}
 	}
 
 	//----------------------------------------------------------------------------------------------
@@ -1154,74 +1234,6 @@ public class JobMaster extends FencedRpcEndpoint<JobMasterId> implements JobMast
 	}
 
 	private ExecutionGraph createExecutionGraph(JobManagerJobMetricGroup currentJobManagerJobMetricGroup) throws JobExecutionException, JobException {
-		try {
-			ArrayList<JobID>  archivedStore = new ArrayList<>(this.highAvailabilityServices
-				.getSubmittedJobGraphStore()
-				.getJobIds());
-
-			if(!archivedStore.isEmpty()) {
-				log.warn("JOBID LIST IS {}", archivedStore.toString());
-				for(JobID curID: archivedStore) {
-					if(curID.equals(jobGraph.getJobID()))
-						continue;
-					JobGraph preJobGraph = this.highAvailabilityServices
-						.getSubmittedJobGraphStore().recoverJobGraph(curID).getJobGraph();
-
-					Map<String, List<JobVertex>> diffUnit = jobGraph
-						.findSharePossibilityWithCandidate(preJobGraph);
-					log.warn("get DiffUnit here");
-					for(JobVertex sharedVertex : diffUnit.get("shared")) {
-						log.warn("shared vertex {}", sharedVertex.toString());
-					}
-					for(JobVertex remainedVertex : diffUnit.get("remained")) {
-						log.warn("remained vertex {}", remainedVertex.toString());
-					}
-					// just connect the remained vertex to the entrance of the original graph
-					List<JobVertex> remainedVertex = diffUnit.get("remained");
-					List<JobVertex> sharedVertex = diffUnit.get("shared");
-					if(!remainedVertex.isEmpty() && !sharedVertex.isEmpty()) {
-						JobVertex predecessor = sharedVertex.get(sharedVertex.size() - 1);
-						// former
-						// producer
-						DistributionPattern originalPattern = DistributionPattern.ALL_TO_ALL;
-						ResultPartitionType originalType = ResultPartitionType.PIPELINED_BOUNDED;
-						String shipStrategyName = null;
-						String preprocessingOpsName = null;
-						String operatorLevelCachingDescription = null;
-
-						for(JobEdge curEdge: remainedVertex.get(0).getInputs()) {
-							if(curEdge.getSource().getProducer().getID().equals(predecessor.getID
-								())) {
-								log.warn("remained {}", remainedVertex.get(0).toString());
-								originalPattern = curEdge.getDistributionPattern();
-								originalType = curEdge.getSource().getResultType();
-								shipStrategyName = curEdge.getShipStrategyName();
-								preprocessingOpsName = curEdge.getPreProcessingOperationName();
-								operatorLevelCachingDescription = curEdge.getOperatorLevelCachingDescription();
-							}
-						}
-						log.warn("shared vertex {}", predecessor.toString());
-						remainedVertex.get(0).removeInputs();
-						remainedVertex.get(0).connectNewDataSetAsInput(predecessor, originalPattern, originalType);
-						log.warn("shipStrategy name {} level {} preprocessing {}",
-							shipStrategyName, operatorLevelCachingDescription, preprocessingOpsName);
-
-//						newEdge.setShipStrategyName(shipStrategyName);
-//						newEdge.setOperatorLevelCachingDescription(operatorLevelCachingDescription);
-//						newEdge.setPreProcessingOperationName(preprocessingOpsName);
-
-						for(JobVertex remainVertex : remainedVertex) {
-							jobGraph.addVertex(remainVertex);
-						}
-					}
-				}
-			}
-		} catch(Exception e) {
-			log.warn("can't get subttedJobGraph", e);
-		}
-
-//		log.info(JsonPlanGenerator.generatePlan(this.jobGraph));
-
 		return ExecutionGraphBuilder.buildGraph(
 			null,
 			jobGraph,

@@ -53,6 +53,7 @@ import org.apache.flink.runtime.executiongraph.restart.{RestartStrategyFactory, 
 import org.apache.flink.runtime.highavailability.HighAvailabilityServicesUtils.AddressResolution
 import org.apache.flink.runtime.highavailability.{HighAvailabilityServices, HighAvailabilityServicesUtils}
 import org.apache.flink.runtime.instance.{AkkaActorGateway, InstanceID, InstanceManager}
+import org.apache.flink.runtime.jobgraph.jsonplan.JsonPlanGenerator
 import org.apache.flink.runtime.jobgraph.{JobGraph, JobStatus}
 import org.apache.flink.runtime.jobmanager.SubmittedJobGraphStore.SubmittedJobGraphListener
 import org.apache.flink.runtime.jobmanager.scheduler.{Scheduler => FlinkScheduler}
@@ -1278,6 +1279,14 @@ class JobManager(
 
         val allocationTimeout: Long = flinkConfiguration.getLong(
           JobManagerOptions.SLOT_REQUEST_TIMEOUT)
+
+        log.error("!@#$%^")
+        submittedJobGraphs.getJobIds.asScala foreach {
+          id => {
+            val jg = submittedJobGraphs.recoverJobGraph(id)
+            log.error(JsonPlanGenerator.generatePlan(jg.getJobGraph))
+          }
+        }
 
         executionGraph = ExecutionGraphBuilder.buildGraph(
           executionGraph,

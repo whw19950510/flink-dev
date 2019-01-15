@@ -810,7 +810,7 @@ public class ExecutionGraph implements AccessExecutionGraph {
 
 	public void attachJobGraph(List<JobVertex> topologiallySorted) throws JobException {
 
-		LOG.debug("Attaching {} topologically sorted vertices to existing job graph with {} " +
+		LOG.info("Attaching {} topologically sorted vertices to existing job graph with {} " +
 				"vertices and {} intermediate results.",
 				topologiallySorted.size(), tasks.size(), intermediateResults.size());
 
@@ -852,7 +852,8 @@ public class ExecutionGraph implements AccessExecutionGraph {
 			this.numVerticesTotal += ejv.getParallelism();
 			newExecJobVertices.add(ejv);
 		}
-
+		LOG.info("@@@@@@@@@@@");
+		LOG.info(this.intermediateResults.toString());
 		terminationFuture = new CompletableFuture<>();
 		failoverStrategy.notifyNewVertices(newExecJobVertices);
 	}

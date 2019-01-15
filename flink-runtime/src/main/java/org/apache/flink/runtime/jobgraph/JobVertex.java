@@ -35,6 +35,7 @@ import org.apache.flink.util.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +49,7 @@ public class JobVertex implements java.io.Serializable {
 	private static final String NOT_SET = "";
 	private static final String EMPTY = "{}";
 	private Logger LOG = LoggerFactory.getLogger(JobVertex.class);
+
 
 	private static final long serialVersionUID = 1L;
 
@@ -121,6 +123,10 @@ public class JobVertex implements java.io.Serializable {
 	/** Optional, the JSON for the optimizer properties of the operator result,
 	 * to be included in the JSON plan */
 	private String resultOptimizerProperties;
+
+	private boolean isShareable = false;
+
+	private JobVertexID shareVertex;
 
 	// --------------------------------------------------------------------------------------------
 
@@ -571,6 +577,7 @@ public class JobVertex implements java.io.Serializable {
 
 	@Override
 	public String toString() {
+//		return this.name + " (" + this.invokableClassName + ')';
 		try {
 			final StringWriter writer = new StringWriter(8192);
 
@@ -628,13 +635,6 @@ public class JobVertex implements java.io.Serializable {
 				String colocateGroupStr =  this.getCoLocationGroup().getId().toString();
 				gen.writeStringField("colocateGroupStr", colocateGroupStr);
 			}
-			if(this.getConfiguration() != null) {
-				gen.writeStringField("jobconfig", this.getConfiguration().toString());
-			}
-
-			if(this.getInputSplitSource() != null) {
-				gen.writeStringField("inputSplitSource", this.getInputSplitSource().toString());
-			}
 
 			if (!this.isInputVertex()) {
 				// write the input edge properties
@@ -651,8 +651,8 @@ public class JobVertex implements java.io.Serializable {
 
 					JobVertex predecessor = edge.getSource().getProducer();    // former producer
 					String shipStrategy = edge.getShipStrategyName() == null ? NOT_SET : edge.getShipStrategyName();
-					String distributionPattern = edge.getDistributionPattern().getName() == null
-						? NOT_SET : edge.getDistributionPattern().getName();
+					String distributionPattern = edge.getDistributionPattern().name() == null
+						? NOT_SET : edge.getDistributionPattern().name();
 
 					String preProcessingOperation = edge.getPreProcessingOperationName() == null
 						? NOT_SET : edge.getPreProcessingOperationName();
@@ -702,6 +702,22 @@ public class JobVertex implements java.io.Serializable {
 	}
 
 	public void removeInputs() {
-		inputs.clear();
+		this.inputs.clear();
+	}
+
+	public boolean isShareable() {
+		return this.isShareable;
+	}
+
+	public void setShareable(boolean shareable) {
+		this.isShareable = shareable;
+	}
+
+	public JobVertexID getShareVertex() {
+		return shareVertex;
+	}
+
+	public void setShareVertex(@Nullable JobVertexID shareVertex) {
+		this.shareVertex = shareVertex;
 	}
 }
